@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Dev env",
+            "configurations": [ "Launch via Yarn", "Launch localhost"],
+            "stopAll": true
+        }
+    ],
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch via Yarn",
+            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}",
+            "runtimeArgs": [
+                "dev",
+                "--host"
+            ],
+            "serverReadyAction": {
+                "pattern": "listening on port ([0-9]+)",
+                "uriFormat": "http://localhost:%s",
+                "action": "openExternally"
+            }
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "clearConsoleOnReload": true,
+            "name": "Launch localhost",
+            // open url in node port
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:3000/_nuxt/pages",
+                    "path": "${workspaceFolder}/pages"
+                }
+            ]
+        }
+    ]
+}
