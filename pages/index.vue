@@ -5,7 +5,7 @@ let imagesCollection = reactive(
   Array.from({ length: 10 }).map((_, index) => {
     return {
       id: index.toString(),
-      src: `https://picsum.photos/seed/${index + 1}/200/300`,
+      src: `https://picsum.photos/seed/${index + 1}/100`,
     };
   })
 );
@@ -29,12 +29,14 @@ const initiliazeGrid = () => {
   const grid1: Grid = new $muuri(".grid-1", {
     dragEnabled: true,
     dragSort: getSortableGrids,
+    dragHandle: ".item-image",
   });
 
   let houseGrids: Grid[] = houseImagesArray.value.map((houseImages) => {
     return new $muuri(`.griddy${houseImages.id}`, {
       dragEnabled: true,
       dragSort: getSortableGrids,
+      dragHandle: ".item-image",
     });
   });
   const allGrids: globalThis.Ref<Grid[]> = ref([grid1, ...houseGrids]);
@@ -83,7 +85,22 @@ if (process.browser) {
     >
       <div class="item-content">
         <!-- Safe zone, enter your custom markup -->
-        <NuxtImg :src="image.src" alt="" />
+        <div class="item-viewer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"
+            />
+          </svg>
+        </div>
+        <div class="item-image">
+          <NuxtImg :src="image.src" alt="" style="overflow: hidden" />
+        </div>
         <!-- Safe zone ends -->
       </div>
     </div>
@@ -126,14 +143,18 @@ img {
 .item {
   display: block;
   position: absolute;
-  width: 50px;
-  height: 50px;
+
+  width: 100px;
+  height: 100px;
   margin: 5px;
   z-index: 1;
   background: #000;
   color: #fff;
 }
 
+.item-image {
+  cursor: move;
+}
 .grid-test > div {
   height: 300px;
   background-image: url("https://image.freepik.com/free-vector/cartoon-halloween-house_23-2148658717.jpg");
@@ -152,6 +173,26 @@ img {
   background-color: rgb(25, 23, 23);
   align-self: flex-end;
   margin-bottom: 0.5rem;
+}
+
+.item-viewer {
+  opacity: 0;
+
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.5rem;
+  position: absolute;
+  right: 0rem;
+  top: 0rem;
+  background: #ffe884;
+  color: #ff69ea;
+  z-index: 100;
+}
+
+.item-content:hover > .item-viewer {
+  opacity: 1;
+  transform: scale(1, 1);
+  transition: transform 0.2s 0.1s ease, opacity 0.2s 0.1s linear;
 }
 
 .griddy1 > .item {
@@ -180,7 +221,6 @@ img {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
 @keyframes wobble {
