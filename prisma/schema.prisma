@@ -1,0 +1,48 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id              String           @id @default(uuid())
+  discordId       String           @db.VarChar(255)
+  name            String           @db.VarChar(255)
+  submittedImages SubmittedImage[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model SubmittedImage {
+  id        String   @id @default(uuid())
+  path      String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Person    Person?  @relation(fields: [personId], references: [id])
+  personId  String?
+  Guess     Guess[]
+}
+
+model Guesser {
+  id        String   @id @default(uuid())
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Guess     Guess[]
+}
+
+model Guess {
+  id             String         @id @default(uuid())
+  guess          String         @db.VarChar(255)
+  guessedImage   SubmittedImage @relation(fields: [guessedImageId], references: [id])
+  guessedImageId String
+  guesser        Guesser        @relation(fields: [guesserId], references: [id])
+  guesserId      String
+  description    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}

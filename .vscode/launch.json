@@ -16,7 +16,7 @@
             "cwd": "${workspaceFolder}",
             "runtimeArgs": [
                 "dev",
-                "--host"
+                "--host",
             ],
             "serverReadyAction": {
                 "pattern": "listening on port ([0-9]+)",
@@ -39,6 +39,16 @@
                     "path": "${workspaceFolder}/pages"
                 }
             ]
-        }
+        },
+        {
+            "type": "bun",
+            "internalConsoleOptions": "openOnSessionStart",
+            "request": "launch",
+            "name": "Discord Bot",
+            "program": "index.ts",
+            "cwd": "${workspaceFolder}/discord-bot",
+            "stopOnEntry": false,
+            "watchMode": true
+        },
     ]
 }

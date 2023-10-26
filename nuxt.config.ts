@@ -10,7 +10,8 @@ export default defineNuxtConfig({
   modules: ["@nuxt/ui", "@nuxt/image"],
   imports: { autoImport: true, dirs: ["node_modules"], global: false },
   typescript: {
-    tsConfig: { include: ["node_modules"] }
+    tsConfig: { include: ["node_modules"] },
+
   },
   build: {
     transpile: ["muuri"],

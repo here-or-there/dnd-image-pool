@@ -1,21 +1,45 @@
 <script setup lang="ts">
-import Grid, { DragSortGetter, Item } from "muuri";
+import Grid, { DragSortGetter, Item, ItemDragPlaceholder } from "muuri";
 
-let imagesCollection = reactive(
+interface chosenImage {
+  id: number;
+}
+
+interface imageComment {
+  id: number;
+  comment: string;
+}
+
+// const { data: submittedImages } = await useFetch("/api/images");
+
+// random images
+const submittedImages = ref(
   Array.from({ length: 10 }).map((_, index) => {
     return {
-      id: index.toString(),
-      src: `https://picsum.photos/seed/${index + 1}/100`,
+      id: index,
+      path: `https://picsum.photos/200?random=${index}`,
     };
   })
 );
-let firstHalf = ref(imagesCollection);
-let firstHalfCopy: any = ref([]);
-let houseImagesArray = ref(
-  Array.from({ length: 10 }).map((_, index) => {
-    return { id: index, imageIds: [] };
+
+let imagesCollection = reactive(
+  submittedImages.value.map((image, index) => {
+    return {
+      id: image.id,
+      src: image.path,
+    };
   })
 );
+const imageComments = ref<Array<imageComment>>([]);
+
+let firstHalf = ref(imagesCollection);
+let firstHalfCopy: any = ref([]);
+const houseImagesArray: Ref<{ id: string; chosenImages: chosenImage[] }> = ref(
+  Array.from({ length: 10 }).map((_, index) => {
+    return { id: index, chosenImages: [] };
+  })
+);
+let isOpen = ref(false);
 
 const initiliazeGrid = () => {
   let getSortableGrids: DragSortGetter = (item) => {
@@ -49,11 +73,20 @@ const initiliazeGrid = () => {
 
   houseGrids.forEach((grid: Grid, index: any) => {
     grid.on("dragReleaseEnd", function (item) {
-      houseImagesArray.value[index].imageIds = [];
-      grid.getItems().forEach((item) => {
-        houseImagesArray.value[index].imageIds.push(item.getElement()?.id);
+      houseGrids.forEach((grid: Grid, index: any) => {
+        houseImagesArray.value[index].chosenImages.length = 0;
+        grid.getItems().forEach((item) => {
+          let imageId = item.getElement()?.id;
+          let chosenImage: chosenImage = {
+            id: imageId,
+            comment: "",
+          };
+          houseImagesArray.value[index].chosenImages.push(chosenImage);
+        });
       });
     });
+
+    grid.on("dragEnd", function (item) {});
   });
 
   function sync(grid: Grid) {
@@ -62,8 +95,15 @@ const initiliazeGrid = () => {
     });
   }
 };
+
+let openModal = () => {
+  isOpen.value = true;
+};
+
 const route = useRoute();
 const { $muuri } = useNuxtApp();
+
+const commentText = ref("");
 
 // Only run if process in browser and div with classes grid-1 and grid-2 exist
 if (process.browser) {
@@ -74,6 +114,10 @@ if (process.browser) {
 </script>
 
 <template>
+  <ImageViewerModal
+    :is-open="isOpen"
+    @close="isOpen = false"
+  ></ImageViewerModal>
   <div class="grid grid-1">
     <div
       class="item"
@@ -86,20 +130,22 @@ if (process.browser) {
       <div class="item-content">
         <!-- Safe zone, enter your custom markup -->
         <div class="item-viewer">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="currentColor"
-              d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"
-            />
-          </svg>
+          <button @click="openModal">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 9a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5a5 5 0 0 1 5-5a5 5 0 0 1 5 5a5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"
+              />
+            </svg>
+          </button>
         </div>
         <div class="item-image">
-          <NuxtImg :src="image.src" alt="" style="overflow: hidden" />
+          <img :src="image.src" alt="" style="overflow: hidden" />
         </div>
         <!-- Safe zone ends -->
       </div>
@@ -118,7 +164,18 @@ if (process.browser) {
     </div>
   </div>
   <div>
-    {{ houseImagesArray }}
+    <ul>
+      <li v-for="houseImages in houseImagesArray" :key="2">
+        <template v-if="houseImages.chosenImages.length > 0">
+          House {{ houseImages.id }}:
+          <ul>
+            <li v-for="image in houseImages.chosenImages" :key="image.id">
+              {{ image }}
+            </li>
+          </ul>
+        </template>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -225,13 +282,36 @@ img {
 
 @keyframes wobble {
   0% {
-    transform: rotate(-1deg);
+    transform: rotate(-3deg);
     animation-timing-function: ease-in;
   }
 
   50% {
-    transform: rotate(1.5deg);
+    transform: rotate(4.5deg);
     animation-timing-function: ease-out;
   }
+}
+
+.letter:before,
+.letter:after {
+  content: "";
+  height: 98%;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+}
+.letter:before {
+  background: #fafafa;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  left: -5px;
+  top: 4px;
+  transform: rotate(-2.5deg);
+}
+.letter:after {
+  background: #f6f6f6;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  right: -3px;
+  top: 1px;
+  transform: rotate(1.4deg);
 }
 </style>
