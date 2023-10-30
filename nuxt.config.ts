@@ -19,5 +19,8 @@ export default defineNuxtConfig({
   image: {
 
   },
-  logLevel: 'info'
+  logLevel: 'info',
+  colorMode: {
+    preference: 'dark',
+  }
 })

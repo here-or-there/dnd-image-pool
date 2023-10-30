@@ -14,7 +14,7 @@ WORKDIR /src
 FROM base as build
 
 COPY --link package.json yarn.lock ./
-COPY --link ./prisma prisma
+COPY --link prisma ./prisma/
 RUN yarn install --production=false
 
 COPY --link . .

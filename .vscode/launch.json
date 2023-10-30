@@ -16,7 +16,7 @@
             "cwd": "${workspaceFolder}",
             "runtimeArgs": [
                 "dev",
-                "--host",
+                // "--host",
             ],
             "serverReadyAction": {
                 "pattern": "listening on port ([0-9]+)",

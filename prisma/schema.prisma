@@ -15,6 +15,7 @@ model Person {
   submittedImages SubmittedImage[]
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  Guess           Guess[]
 }
 
 model SubmittedImage {
@@ -37,11 +38,13 @@ model Guesser {
 
 model Guess {
   id             String         @id @default(uuid())
-  guess          String         @db.VarChar(255)
   guessedImage   SubmittedImage @relation(fields: [guessedImageId], references: [id])
   guessedImageId String
   guesser        Guesser        @relation(fields: [guesserId], references: [id])
   guesserId      String
+  /// Who they think submitted this image
+  person         Person         @relation(fields: [personId], references: [id])
+  personId       String
   description    String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
