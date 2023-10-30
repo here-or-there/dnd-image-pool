@@ -15,13 +15,13 @@ WORKDIR /src
 # Build
 FROM base as build
 
-COPY --link package.json yarn.lock ./
-COPY --link prisma ./prisma/
+COPY  package.json yarn.lock ./
+COPY  prisma ./prisma/
 
 RUN apt-get update -y && apt-get install -y openssl
 RUN yarn install --production=false
 
-COPY --link . .
+COPY . .
 RUN yarn build
 
 # Run
