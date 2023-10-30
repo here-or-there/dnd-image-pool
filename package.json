@@ -15,6 +15,9 @@
     "@types/body-parser": "^1.19.4",
     "nuxt": "^3.7.4"
   },
+  "trustedDependencies": [
+    "@prisma/client"
+  ],
   "prisma": {
     "schema": "prisma/schema.prisma"
   },

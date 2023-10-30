@@ -131,7 +131,7 @@ const okayEndings = ref([
   "You gave some evidence to the detectives. The evidence was important but controversial. The police presented it in court as proof of the guilt of the criminal. The criminal hired a clever lawyer (whose last name rhymed with 'Right') who challenged the validity of the evidence and created reasonable doubt. With no other evidence the alleged criminal was found not guilty.",
   "You showed some evidence to the jury. The evidence was while not conclusive by its own, the police also had other leads to use. After a while the police manages to capture the alleged culprit. They were sentenced to life imprisonment but still proclaim their innocence to this day.",
   "You disclosed some evidence to the witness protection program. The evidence was surprising but enlightening. The police discovered it revealed a hidden motive for the murder. The criminal had a personal grudge against the victim and killed them for revenge.",
-  "After investigation your evidence turned out to be intriguing but not related. The police ignored it to focused on other leads. However, with not much to go on they were unable to pinpoint any suspects. The criminal remains at large.",
+  "After investigation your evidence turned out to be intriguing but not related. The police ignored it to focus on other leads. However, with not much to go on they were unable to pinpoint any suspects. The criminal remains at large.",
 ]);
 
 const badEndings = ref([
