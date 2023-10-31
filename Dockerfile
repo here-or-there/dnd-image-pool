@@ -2,7 +2,7 @@
 
 ARG NODE_VERSION=18.18.0
 
-FROM node:${NODE_VERSION} as base
+FROM node:${NODE_VERSION}-slim as base
 ARG PORT
 ENV PORT ${PORT}
 ARG DATABASE_URL
@@ -18,9 +18,9 @@ FROM base as build
 COPY  package.json yarn.lock ./
 COPY  prisma ./prisma/
 
-RUN apt-get install -y openssl
-# RUN yarn install --production=false
-RUN npm install --production=false
+RUN apt-get update && apt-get install -y openssl
+RUN yarn install --production=false
+#RUN npm install --production=false
 
 COPY . .
 RUN yarn build
