@@ -19,7 +19,8 @@ COPY  package.json yarn.lock ./
 COPY  prisma ./prisma/
 
 RUN apt-get install -y openssl
-RUN yarn install --production=false
+# RUN yarn install --production=false
+RUN npm install --production=false
 
 COPY . .
 RUN yarn build
